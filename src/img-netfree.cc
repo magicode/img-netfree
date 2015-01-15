@@ -38,19 +38,18 @@ static void imageBlurWork(uv_work_t* req) {
 
 	FIMEMORY * fiMemoryIn = NULL;
 	FIMEMORY * fiMemoryOut = NULL;
-	FIBITMAP * fiBitmap = NULL, *thumbnail1 = NULL, *thumbnail2 = NULL;
-	int width , height;
+	FIBITMAP * fiBitmap = NULL, *thumbnail1 = NULL, *thumbnail2 = NULL , *tmpImage = NULL;
+	FREE_IMAGE_FORMAT format;
+	int width , height , bpp;
 	fiMemoryIn = baton->fiMemoryIn;	//FreeImage_OpenMemory((BYTE *)baton->imageBuffer,baton->imageBufferLength);
 
 
 
-
-	FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(fiMemoryIn);
-
-
+	format = FreeImage_GetFileTypeFromMemory(fiMemoryIn);
 
 	if (format < 0 /*|| FIF_GIF == format*/)
 		goto ret;
+
 
 	fiBitmap = FreeImage_LoadFromMemory(format, fiMemoryIn);
 
@@ -67,6 +66,14 @@ static void imageBlurWork(uv_work_t* req) {
 
 	width = FreeImage_GetWidth(fiBitmap);
 	height = FreeImage_GetHeight(fiBitmap);
+
+	bpp = FreeImage_GetBPP(fiBitmap);
+
+	if(bpp != 32 || bpp != 24){
+		tmpImage = FreeImage_ConvertTo32Bits(fiBitmap);
+		FreeImage_Unload(fiBitmap);
+		fiBitmap = tmpImage;
+	}
 
 	thumbnail1 = FreeImage_Rescale(fiBitmap, 3, 3, FILTER_BOX);
 

@@ -49,7 +49,7 @@ static void imageBlurWork(uv_work_t* req) {
 
 
 
-	if (format < 0 || FIF_GIF == format)
+	if (format < 0 /*|| FIF_GIF == format*/)
 		goto ret;
 
 	fiBitmap = FreeImage_LoadFromMemory(format, fiMemoryIn);

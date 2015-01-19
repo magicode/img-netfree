@@ -25,9 +25,7 @@ struct Baton {
 
 	FIMEMORY* fiMemoryOut;
 	FIMEMORY* fiMemoryIn;
-	FIBITMAP* bitmap;
-	u_int8_t* bits;
-	u_int16_t sum;
+	int count_pixel;
 };
 
 static void imageBlurWork(uv_work_t* req) {
@@ -75,7 +73,7 @@ static void imageBlurWork(uv_work_t* req) {
 		fiBitmap = tmpImage;
 	}
 
-	thumbnail1 = FreeImage_Rescale(fiBitmap, 3, 3, FILTER_BOX);
+	thumbnail1 = FreeImage_Rescale(fiBitmap, baton->count_pixel,baton->count_pixel, FILTER_BOX);
 
 	if (!thumbnail1)
 		goto ret;
@@ -145,6 +143,7 @@ static void imageBlurAfter(uv_work_t* req) {
 static Handle<Value> imageBlur(const Arguments& args) {
 	HandleScope scope;
 
+	int count_pixel = 3;
 
 	if (args.Length() < 2)
 		return ThrowException(Exception::TypeError(String::New("Expecting 2 arguments")));
@@ -152,11 +151,23 @@ static Handle<Value> imageBlur(const Arguments& args) {
 	if (!Buffer::HasInstance(args[0]))
 		return ThrowException( Exception::TypeError( String::New("First argument must be a Buffer")));
 
-	if (!args[1]->IsFunction())
-		return ThrowException( Exception::TypeError( String::New( "Second argument must be a function")));
+	Local < Function > callback;
 
+	if( args.Length() > 2){
+		if (!args[2]->IsFunction())
+				return ThrowException( Exception::TypeError( String::New( "3 argument must be a function")));
 
-	Local < Function > callback = Local < Function > ::Cast(args[1]);
+		if(args[1]->IntegerValue())
+			count_pixel = args[1]->IntegerValue();
+
+		callback = Local < Function > ::Cast(args[2]);
+	}else{
+		if (!args[1]->IsFunction())
+				return ThrowException( Exception::TypeError( String::New( "2 argument must be a function")));
+
+		callback = Local < Function > ::Cast(args[1]);
+	}
+
 
 #if NODE_MAJOR_VERSION == 0 && NODE_MINOR_VERSION < 10
 	Local < Object > buffer_obj = args[0]->ToObject();
@@ -172,9 +183,7 @@ static Handle<Value> imageBlur(const Arguments& args) {
 	baton->fiMemoryIn = FreeImage_OpenMemory((BYTE *) Buffer::Data(buffer_obj),
 			Buffer::Length(buffer_obj));
 	baton->fiMemoryOut = NULL;
-	baton->bitmap = NULL;
-	baton->bits = NULL;
-	baton->sum = 0;
+	baton->count_pixel = count_pixel;
 
 	int status = uv_queue_work(uv_default_loop(), &baton->request,
 			imageBlurWork, (uv_after_work_cb) imageBlurAfter);

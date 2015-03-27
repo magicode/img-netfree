@@ -14,6 +14,9 @@
 
 #include <math.h>
 
+#include <iostream>
+#include <map>
+
 
 using namespace node;
 using namespace v8;
@@ -26,7 +29,47 @@ struct Baton {
 	FIMEMORY* fiMemoryOut;
 	FIMEMORY* fiMemoryIn;
 	int count_pixel;
+	int title_index;
 };
+
+std::map<int,FIBITMAP *> titles;
+
+
+static BOOL Combine32(FIBITMAP *dst_dib, FIBITMAP *src_dib, unsigned x, unsigned y ) {
+	// check the bit depth of src and dst images
+	if((FreeImage_GetBPP(dst_dib) != 32) || (FreeImage_GetBPP(src_dib) != 32)) {
+		return FALSE;
+	}
+
+	// check the size of src image
+	if((x + FreeImage_GetWidth(src_dib) > FreeImage_GetWidth(dst_dib)) || (y + FreeImage_GetHeight(src_dib) > FreeImage_GetHeight(dst_dib))) {
+		return FALSE;
+	}
+
+	BYTE *dst_bits = FreeImage_GetBits(dst_dib) + ((FreeImage_GetHeight(dst_dib) - FreeImage_GetHeight(src_dib) - y) * FreeImage_GetPitch(dst_dib)) + (x * 4);
+	BYTE *src_bits = FreeImage_GetBits(src_dib);
+
+	unsigned alpha = 0;
+	unsigned height = FreeImage_GetHeight(src_dib);
+	unsigned line = FreeImage_GetLine(src_dib);
+
+	for(unsigned rows = 0; rows < height; rows++) {
+		for( unsigned cols = 0; cols < line; cols++ ){
+			alpha = src_bits[cols+3];
+			dst_bits[cols] = (BYTE)(((src_bits[cols] - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
+			cols++;
+			dst_bits[cols] = (BYTE)(((src_bits[cols] - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
+			cols++;
+			dst_bits[cols] = (BYTE)(((src_bits[cols] - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
+			cols++;
+		}
+
+		dst_bits += FreeImage_GetPitch(dst_dib);
+		src_bits += FreeImage_GetPitch(src_dib);
+	}
+
+	return TRUE;
+}
 
 static void imageBlurWork(uv_work_t* req) {
 
@@ -40,8 +83,8 @@ static void imageBlurWork(uv_work_t* req) {
 	FREE_IMAGE_FORMAT format;
 	int width , height , bpp;
 	fiMemoryIn = baton->fiMemoryIn;	//FreeImage_OpenMemory((BYTE *)baton->imageBuffer,baton->imageBufferLength);
-
-
+	std::map<int,FIBITMAP *>::iterator iter;
+	int tw , th ;
 
 	format = FreeImage_GetFileTypeFromMemory(fiMemoryIn);
 
@@ -67,7 +110,7 @@ static void imageBlurWork(uv_work_t* req) {
 
 	bpp = FreeImage_GetBPP(fiBitmap);
 
-	if(bpp != 32 || bpp != 24){
+	if(bpp != 32){
 		tmpImage = FreeImage_ConvertTo32Bits(fiBitmap);
 		FreeImage_Unload(fiBitmap);
 		fiBitmap = tmpImage;
@@ -79,6 +122,19 @@ static void imageBlurWork(uv_work_t* req) {
 		goto ret;
 
 	thumbnail2 = FreeImage_Rescale( thumbnail1, width, height, FILTER_BOX );
+
+
+	if(baton->title_index){
+		iter = titles.find(baton->title_index);
+		if (iter != titles.end() )
+		{
+			if(iter->second){
+				tw = FreeImage_GetWidth(iter->second);
+				th = FreeImage_GetHeight(iter->second);
+				Combine32( thumbnail2, iter->second, (width/2)-(tw/2) ,(height/2)-(th/2) );
+			}
+		}
+	}
 
 	if (!thumbnail2)
 		goto ret;
@@ -143,7 +199,11 @@ static void imageBlurAfter(uv_work_t* req) {
 static Handle<Value> imageBlur(const Arguments& args) {
 	HandleScope scope;
 
-	int count_pixel = 3;
+	Baton* baton = new Baton();
+	baton->count_pixel = 3;
+	baton->title_index = 0;
+
+	int indexCallback = args.Length() - 1;
 
 	if (args.Length() < 2)
 		return ThrowException(Exception::TypeError(String::New("Expecting 2 arguments")));
@@ -154,20 +214,19 @@ static Handle<Value> imageBlur(const Arguments& args) {
 	Local < Function > callback;
 
 	if( args.Length() > 2){
-		if (!args[2]->IsFunction())
-				return ThrowException( Exception::TypeError( String::New( "3 argument must be a function")));
-
 		if(args[1]->IntegerValue())
-			count_pixel = args[1]->IntegerValue();
-
-		callback = Local < Function > ::Cast(args[2]);
-	}else{
-		if (!args[1]->IsFunction())
-				return ThrowException( Exception::TypeError( String::New( "2 argument must be a function")));
-
-		callback = Local < Function > ::Cast(args[1]);
+			baton->count_pixel = args[1]->IntegerValue();
 	}
 
+	if( args.Length() > 3 ){
+		if(args[2]->IntegerValue())
+			baton->title_index = args[2]->IntegerValue();
+	}
+
+	if (!args[indexCallback]->IsFunction())
+		return ThrowException( Exception::TypeError( String::New( "no have callback")));
+
+	callback = Local < Function > ::Cast(args[indexCallback]);
 
 #if NODE_MAJOR_VERSION == 0 && NODE_MINOR_VERSION < 10
 	Local < Object > buffer_obj = args[0]->ToObject();
@@ -175,7 +234,7 @@ static Handle<Value> imageBlur(const Arguments& args) {
 	Local<Value> buffer_obj = args[0];
 #endif
 
-	Baton* baton = new Baton();
+
 	baton->request.data = baton;
 	baton->callback = Persistent < Function > ::New(callback);
 
@@ -183,7 +242,7 @@ static Handle<Value> imageBlur(const Arguments& args) {
 	baton->fiMemoryIn = FreeImage_OpenMemory((BYTE *) Buffer::Data(buffer_obj),
 			Buffer::Length(buffer_obj));
 	baton->fiMemoryOut = NULL;
-	baton->count_pixel = count_pixel;
+
 
 	int status = uv_queue_work(uv_default_loop(), &baton->request,
 			imageBlurWork, (uv_after_work_cb) imageBlurAfter);
@@ -192,13 +251,60 @@ static Handle<Value> imageBlur(const Arguments& args) {
 	return Undefined();
 }
 
+static Handle<Value> addImageTitle(const Arguments& args) {
+	HandleScope scope;
 
+	int index = 0;
+	FIBITMAP * imageTitle = NULL;
+
+	if (args.Length() < 2)
+		return ThrowException(Exception::TypeError(String::New("Expecting 2 arguments")));
+
+	if (!Buffer::HasInstance(args[0]))
+		return ThrowException( Exception::TypeError( String::New("First argument must be a Buffer")));
+
+	Local < Function > callback;
+
+
+	if(args[1]->IntegerValue())
+	index = args[1]->IntegerValue();
+
+	callback = Local < Function > ::Cast(args[2]);
+
+
+
+#if NODE_MAJOR_VERSION == 0 && NODE_MINOR_VERSION < 10
+	Local < Object > buffer_obj = args[0]->ToObject();
+#else
+	Local<Value> buffer_obj = args[0];
+#endif
+
+
+
+	FIMEMORY *  fiMemoryIn =  FreeImage_OpenMemory((BYTE *) Buffer::Data(buffer_obj), Buffer::Length(buffer_obj));
+
+	imageTitle = FreeImage_LoadFromMemory(FreeImage_GetFileTypeFromMemory(fiMemoryIn), fiMemoryIn);
+
+	if (fiMemoryIn)
+		FreeImage_CloseMemory(fiMemoryIn);
+
+
+	std::map<int,FIBITMAP *>::iterator iter = titles.find(index);
+	if (iter != titles.end() ){
+		if(iter->second) FreeImage_Unload( iter->second);
+	}
+
+	titles[index] = imageTitle;
+
+	return Undefined();
+}
 
 extern "C" {
 	void init(Handle<Object> target) {
 		HandleScope scope;
 
 		target->Set(String::NewSymbol("imageBlur"), FunctionTemplate::New(imageBlur)->GetFunction());
+		target->Set(String::NewSymbol("addImageTitle"), FunctionTemplate::New(addImageTitle)->GetFunction());
 
 	}
 

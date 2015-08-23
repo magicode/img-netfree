@@ -55,13 +55,31 @@ static BOOL Combine32(FIBITMAP *dst_dib, FIBITMAP *src_dib, unsigned x, unsigned
 
 	for(unsigned rows = 0; rows < height; rows++) {
 		for( unsigned cols = 0; cols < line; cols++ ){
+#if 1		  
 			alpha = src_bits[cols+3];
-			dst_bits[cols] = (BYTE)(((src_bits[cols] - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
-			cols++;
-			dst_bits[cols] = (BYTE)(((src_bits[cols] - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
-			cols++;
-			dst_bits[cols] = (BYTE)(((src_bits[cols] - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
-			cols++;
+			if(alpha != 0){
+			  dst_bits[cols] = (BYTE)(((src_bits[cols] - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
+			  cols++;
+			  dst_bits[cols] = (BYTE)(((src_bits[cols] - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
+			  cols++;
+			  dst_bits[cols] = (BYTE)(((src_bits[cols] - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
+			  cols++;
+			  if(alpha > dst_bits[cols]) dst_bits[cols] = alpha;
+			}else
+			  cols+=3;
+#else
+			alpha = src_bits[cols+3];
+			if(alpha != 0){
+			  dst_bits[cols] = (BYTE)((((0xff-dst_bits[cols]) - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
+			  cols++;
+			  dst_bits[cols] = (BYTE)((((0xff-dst_bits[cols]) - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
+			  cols++;
+			  dst_bits[cols] = (BYTE)((((0xff-dst_bits[cols]) - dst_bits[cols]) * alpha + (dst_bits[cols] << 8)) >> 8);
+			  cols++;
+			}else{
+			  cols+=3;
+			}
+#endif
 		}
 
 		dst_bits += FreeImage_GetPitch(dst_dib);

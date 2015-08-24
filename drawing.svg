@@ -5899,9 +5899,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.12374369"
-     inkscape:cx="-2194.2596"
-     inkscape:cy="1167.1177"
+     inkscape:zoom="0.087500002"
+     inkscape:cx="-963.84872"
+     inkscape:cy="-280.99028"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -5928,7 +5928,7 @@
      id="layer1">
     <path
        sodipodi:type="arc"
-       style="fill:#d40000;stroke:none;fill-opacity:0.50196081"
+       style="fill:#d40000;stroke:none;fill-opacity:0"
        id="path6819"
        sodipodi:cx="1123.2897"
        sodipodi:cy="963.46875"
@@ -5940,7 +5940,7 @@
        inkscape:export-xdpi="1.92"
        inkscape:export-ydpi="1.92" />
     <path
-       style="fill:#000000;stroke:none;fill-opacity:0.78431374"
+       style="fill:#ffffff;stroke:#000000;fill-opacity:0.32972974;stroke-opacity:0.26486485999999998;stroke-width:28;stroke-miterlimit:4;stroke-dasharray:none"
        d="m -3529.333,-398.50154 q 0,208.9552 -113.2812,382.868255 l -981.7709,-977.287495 q 178.3854,-115.50932 386.7188,-115.50932 144.5312,0 275.3906,56.4568 130.8593,56.45682 225.9115,151.20052 95.052,94.7437 151.0416,226.47632 55.9896,131.73264 55.9896,275.79492 z m -1300.7812,-388.05964 983.0728,978.58527 q -175.7812,118.10513 -390.6249,118.10513 -192.7084,0 -355.4688,-94.74368 -162.7604,-94.74366 -257.8124,-258.273825 -95.0523,-163.530215 -95.0523,-355.613255 0,-210.25308 115.8856,-388.05964 z m 1592.4478,388.05964 q 0,-203.76376 -79.4271,-389.35754 -79.427,-185.5938 -212.8906,-319.27312 -133.4635,-133.6795 -319.0104,-212.849 -185.5469,-79.1693 -388.6718,-79.1693 -203.1251,0 -388.6719,79.1693 -185.5469,79.1695 -319.0105,212.849 -133.4636,133.67932 -212.8907,319.27312 -79.427,185.59378 -79.427,389.35754 0,203.76376 79.427,388.7086151 79.4271,184.9448549 212.8907,318.6242849 133.4636,133.67943 319.0105,212.8488 185.5468,79.16934 388.6719,79.16934 203.1249,0 388.6718,-79.16934 185.5469,-79.16937 319.0104,-212.8488 133.4636,-133.67943 212.8906,-318.6242849 79.4271,-184.9448551 79.4271,-388.7086151 z"
        id="path6799"
        inkscape:connector-curvature="0"
@@ -5949,7 +5949,7 @@
        inkscape:export-filename="/mnt/data/a/projects/netfree/modules/img-netfree/block.png" />
     <path
        sodipodi:type="arc"
-       style="fill:#ccff00;stroke:none;fill-opacity:0.50196081"
+       style="fill:#ccff00;fill-opacity:0;stroke:none"
        id="path6819-5"
        sodipodi:cx="1123.2897"
        sodipodi:cy="963.46875"
@@ -5961,7 +5961,7 @@
        inkscape:export-xdpi="1.92"
        inkscape:export-ydpi="1.92" />
     <path
-       style="fill:#000000;stroke:none;fill-opacity:0.78431374"
+       style="fill:#ffffff;stroke:#000000;fill-opacity:0.32972974;stroke-width:28;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.26486485999999998"
        d="m 2304.8364,-1435.3611 q 36.8297,26.7857 30.1334,71.4286 L 2049.2609,350.35326 q -5.5802,32.36607 -35.7136,50.22321 -15.6247,8.92857 -34.5975,8.92857 -12.2766,0 -26.7852,-5.58036 L 1446.5939,197.45147 1176.5097,526.69254 q -20.0889,25.66964 -54.6864,25.66964 -14.5087,0 -24.5531,-4.46429 -21.205,-7.8125 -34.0395,-26.22767 -12.8346,-18.41518 -12.8346,-40.73661 V 91.424688 L 2014.6634,-1090.495 821.60582,-58.128877 380.76602,-238.93245 q -41.29386,-15.62499 -44.64201,-61.38392 -2.2321,-44.64286 35.71361,-65.84822 L 2228.945,-1437.5932 q 16.7408,-10.0447 35.7136,-10.0447 22.321,0 40.1778,12.2768 z"
        id="path6799-0"
        inkscape:connector-curvature="0"
@@ -5970,23 +5970,23 @@
        inkscape:export-filename="/mnt/data/a/projects/netfree/modules/img-netfree/checking.png" />
     <text
        xml:space="preserve"
-       style="font-size:429.48571777px;font-style:normal;font-weight:normal;text-align:center;line-height:760.00022888%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="1390.9939"
-       y="934.59772"
+       style="font-size:429.48571776999995109px;font-style:normal;font-weight:normal;text-align:center;line-height:760.00022888000000876%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:0.32972974;stroke:#000000;stroke-width:28;stroke-miterlimit:4;stroke-opacity:0.26486485999999998;stroke-dasharray:none;font-family:Sans"
+       x="1360.8992"
+       y="873.83734"
        id="text7626"
        sodipodi:linespacing="760.00023%"
-       transform="scale(1.0741023,0.93101)"
+       transform="scale(1.0741023,0.93101001)"
        inkscape:export-filename="/mnt/data/a/projects/netfree/modules/img-netfree/checking.png"
        inkscape:export-xdpi="1.92"
        inkscape:export-ydpi="1.92"><tspan
          sodipodi:role="line"
          id="tspan7628"
-         x="1390.9939"
-         y="934.59772"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:760.00022888%;letter-spacing:-0.01732472px;text-anchor:middle;font-family:Alef;-inkscape-font-specification:Alef Bold">נשלח לבדיקה</tspan></text>
+         x="1360.8992"
+         y="873.83734"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:760.00022888000000876%;letter-spacing:-0.01732472000000000px;text-anchor:middle;fill:#ffffff;fill-opacity:0.32972974;stroke:#000000;stroke-width:28;stroke-miterlimit:4;stroke-opacity:0.26486485999999998;stroke-dasharray:none;font-family:Alef;-inkscape-font-specification:Alef Bold">נשלח לבדיקה</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:429.48571777px;font-style:normal;font-weight:normal;text-align:center;line-height:760.00022888%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-size:429.48571776999995109px;font-style:normal;font-weight:normal;text-align:center;line-height:760.00022888000000876%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:0.32972974;stroke:#000000;font-family:Sans;stroke-opacity:0.26486485999999998;stroke-width:28.00000010000000117;stroke-miterlimit:4;stroke-dasharray:none"
        x="-3945.0386"
        y="1028.6608"
        id="text7626-9"
@@ -5999,6 +5999,6 @@
          id="tspan7628-6"
          x="-3945.0386"
          y="1028.6608"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:760.00022888%;letter-spacing:-0.01732472px;text-anchor:middle;font-family:Alef;-inkscape-font-specification:Alef Bold">נחסם</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:760.00022888000000876%;letter-spacing:-0.01732472000000000px;text-anchor:middle;font-family:Alef;-inkscape-font-specification:Alef Bold;fill:#ffffff;fill-opacity:0.32972974;stroke:#000000;stroke-opacity:0.26486485999999998;stroke-width:28.00000010000000117;stroke-miterlimit:4;stroke-dasharray:none">נחסם</tspan></text>
   </g>
 </svg>

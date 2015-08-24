@@ -35,7 +35,7 @@
       <glyph
          id="glyph2998"
          horiz-adv-x="448"
-         unicode="	" />
+         unicode=" " />
       <glyph
          id="glyph3000"
          horiz-adv-x="448"
@@ -2972,7 +2972,7 @@
       <glyph
          id="glyph4904"
          horiz-adv-x="448"
-         unicode="	" />
+         unicode=" " />
       <glyph
          id="glyph4906"
          horiz-adv-x="448"
@@ -5901,7 +5901,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.12374369"
      inkscape:cx="-2194.2596"
-     inkscape:cy="-125.87755"
+     inkscape:cy="1167.1177"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -5936,7 +5936,7 @@
        sodipodi:ry="1155.6145"
        d="m 2262.7417,963.46875 a 1139.452,1155.6145 0 1 1 -2278.904054,0 1139.452,1155.6145 0 1 1 2278.904054,0 z"
        transform="matrix(1.3164222,0,0,1.2980107,-5716.39,-1649.7433)"
-       inkscape:export-filename="/mnt/data/a/projects/netfree/modules/img-netfree/path6799.png"
+       inkscape:export-filename="/mnt/data/a/projects/netfree/modules/img-netfree/block.png"
        inkscape:export-xdpi="1.92"
        inkscape:export-ydpi="1.92" />
     <path
@@ -5945,7 +5945,8 @@
        id="path6799"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="1.92"
-       inkscape:export-ydpi="1.92" />
+       inkscape:export-ydpi="1.92"
+       inkscape:export-filename="/mnt/data/a/projects/netfree/modules/img-netfree/block.png" />
     <path
        sodipodi:type="arc"
        style="fill:#ccff00;stroke:none;fill-opacity:0.50196081"
@@ -5956,7 +5957,7 @@
        sodipodi:ry="1155.6145"
        d="m 2262.7417,963.46875 a 1139.452,1155.6145 0 1 1 -2278.904054,0 1139.452,1155.6145 0 1 1 2278.904054,0 z"
        transform="matrix(1.3164222,0,0,1.2980107,21.276481,-1698.2306)"
-       inkscape:export-filename="/mnt/data/a/projects/netfree/modules/img-netfree/path6799-0.png"
+       inkscape:export-filename="/mnt/data/a/projects/netfree/modules/img-netfree/checking.png"
        inkscape:export-xdpi="1.92"
        inkscape:export-ydpi="1.92" />
     <path
@@ -5965,19 +5966,39 @@
        id="path6799-0"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="1.92"
-       inkscape:export-ydpi="1.92" />
+       inkscape:export-ydpi="1.92"
+       inkscape:export-filename="/mnt/data/a/projects/netfree/modules/img-netfree/checking.png" />
     <text
        xml:space="preserve"
-       style="font-size:247.90354919px;font-style:normal;font-weight:normal;text-align:center;line-height:760.00022888%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="1362.7231"
-       y="909.0484"
+       style="font-size:429.48571777px;font-style:normal;font-weight:normal;text-align:center;line-height:760.00022888%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="1390.9939"
+       y="934.59772"
        id="text7626"
        sodipodi:linespacing="760.00023%"
-       transform="scale(1.0824243,0.92385214)"><tspan
+       transform="scale(1.0741023,0.93101)"
+       inkscape:export-filename="/mnt/data/a/projects/netfree/modules/img-netfree/checking.png"
+       inkscape:export-xdpi="1.92"
+       inkscape:export-ydpi="1.92"><tspan
          sodipodi:role="line"
          id="tspan7628"
-         x="1362.7231"
-         y="909.0484"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:760.00022888000000876%;text-anchor:middle;font-family:FreeSans;-inkscape-font-specification:FreeSans;letter-spacing:-0.01px">נשלח לבדיקה</tspan></text>
+         x="1390.9939"
+         y="934.59772"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:760.00022888%;letter-spacing:-0.01732472px;text-anchor:middle;font-family:Alef;-inkscape-font-specification:Alef Bold">נשלח לבדיקה</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:429.48571777px;font-style:normal;font-weight:normal;text-align:center;line-height:760.00022888%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-3945.0386"
+       y="1028.6608"
+       id="text7626-9"
+       sodipodi:linespacing="760.00023%"
+       transform="scale(1.0741023,0.93101001)"
+       inkscape:export-filename="/mnt/data/a/projects/netfree/modules/img-netfree/block.png"
+       inkscape:export-xdpi="1.92"
+       inkscape:export-ydpi="1.92"><tspan
+         sodipodi:role="line"
+         id="tspan7628-6"
+         x="-3945.0386"
+         y="1028.6608"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:760.00022888%;letter-spacing:-0.01732472px;text-anchor:middle;font-family:Alef;-inkscape-font-specification:Alef Bold">נחסם</tspan></text>
   </g>
 </svg>

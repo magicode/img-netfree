@@ -7,4 +7,4 @@ if [ ! -d "FreeImage" ]; then
   exit
 fi
 
-make -C  ./FreeImage > /dev/null 2>&1 & echo true
+make -C  ./FreeImage > /dev/null 2>&1 && echo true

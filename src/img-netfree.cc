@@ -41,6 +41,9 @@ static BOOL Combine32(FIBITMAP *dst_dib, FIBITMAP *src_dib, unsigned x, unsigned
 		return FALSE;
 	}
 
+	if(((int)x)<0 || ((int)y)<0){
+		return FALSE;
+	}
 	// check the size of src image
 	if((x + FreeImage_GetWidth(src_dib) > FreeImage_GetWidth(dst_dib)) || (y + FreeImage_GetHeight(src_dib) > FreeImage_GetHeight(dst_dib))) {
 		return FALSE;

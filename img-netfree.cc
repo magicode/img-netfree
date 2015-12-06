@@ -1,4 +1,5 @@
 
+#include <nan.h>
 #include <node.h>
 #include <v8.h>
 
@@ -18,22 +19,19 @@
 #include <map>
 
 
+using v8::FunctionTemplate;
+using v8::Handle;
+using v8::Object;
+using v8::String;
+using Nan::GetFunction;
+using Nan::New;
+using Nan::Set;
+
 using namespace node;
 using namespace v8;
 
 
-struct Baton {
-	uv_work_t request;
-	Persistent<Function> callback;
-
-	FIMEMORY* fiMemoryOut;
-	FIMEMORY* fiMemoryIn;
-	int count_pixel;
-	int title_index;
-};
-
 std::map<int,FIBITMAP *> titles;
-
 
 static BOOL Combine32(FIBITMAP *dst_dib, FIBITMAP *src_dib, unsigned x, unsigned y ) {
 	// check the bit depth of src and dst images
@@ -92,18 +90,24 @@ static BOOL Combine32(FIBITMAP *dst_dib, FIBITMAP *src_dib, unsigned x, unsigned
 	return TRUE;
 }
 
-static void imageBlurWork(uv_work_t* req) {
 
-	Baton* baton = static_cast<Baton*>(req->data);
-	//uint i;
-	//ImageThumb* obj = baton->obj;
 
-	FIMEMORY * fiMemoryIn = NULL;
-	FIMEMORY * fiMemoryOut = NULL;
+class BlurWorker : public Nan::AsyncWorker {
+ public:
+  BlurWorker(Nan::Callback *callback) : Nan::AsyncWorker(callback) {}
+  ~BlurWorker() {}
+
+  // Executed inside the worker-thread.
+  // It is not safe to access V8, or V8 data structures
+  // here, so everything we need for input and output
+  // should go on `this`.
+  void Execute () {
+
 	FIBITMAP * fiBitmap = NULL, *thumbnail1 = NULL, *thumbnail2 = NULL , *tmpImage = NULL;
 	FREE_IMAGE_FORMAT format;
 	int width , height , bpp;
-	fiMemoryIn = baton->fiMemoryIn;	//FreeImage_OpenMemory((BYTE *)baton->imageBuffer,baton->imageBufferLength);
+
+	
 	std::map<int,FIBITMAP *>::iterator iter;
 	int tw , th ;
 
@@ -137,7 +141,7 @@ static void imageBlurWork(uv_work_t* req) {
 		fiBitmap = tmpImage;
 	}
 
-	thumbnail1 = FreeImage_Rescale(fiBitmap, baton->count_pixel,baton->count_pixel, FILTER_BOX);
+	thumbnail1 = FreeImage_Rescale(fiBitmap, count_pixel,count_pixel, FILTER_BOX);
 
 	if (!thumbnail1)
 		goto ret;
@@ -145,8 +149,8 @@ static void imageBlurWork(uv_work_t* req) {
 	thumbnail2 = FreeImage_Rescale( thumbnail1, width, height, FILTER_BOX );
 
 
-	if(baton->title_index){
-		iter = titles.find(baton->title_index);
+	if(title_index){
+		iter = titles.find(title_index);
 		if (iter != titles.end() )
 		{
 			if(iter->second){
@@ -175,132 +179,115 @@ static void imageBlurWork(uv_work_t* req) {
 	if(thumbnail2)
 		FreeImage_Unload( thumbnail2 );
 
-	baton->fiMemoryOut =  fiMemoryOut;
 
-}
+  }
 
-static void imageBlurAfter(uv_work_t* req) {
-	HandleScope scope;
-	Baton* baton = static_cast<Baton*>(req->data);
+  // Executed when the async work is complete
+  // this function will be run inside the main event loop
+  // so it is safe to use V8 again
+  void HandleOKCallback () {
+    
+        Nan::HandleScope scope;
 
-	if ( baton->fiMemoryOut ) {
+
+	if ( fiMemoryOut ) {
 		const unsigned argc = 2;
 		const char*data;
 		int datalen;
-		FreeImage_AcquireMemory(baton->fiMemoryOut,(BYTE**)&data, (DWORD*)&datalen );
+		FreeImage_AcquireMemory(fiMemoryOut,(BYTE**)&data, (DWORD*)&datalen );
 		Local<Value> argv[argc] = {
-			Local<Value>::New( Null() ),
-			Local<Object>::New( Buffer::New((const char*)data,datalen)->handle_)
+			Nan::Null(),
+			Nan::CopyBuffer((char*)data,datalen).ToLocalChecked()
 		};
 
-		TryCatch try_catch;
-		baton->callback->Call(Context::GetCurrent()->Global(), argc, argv);
+		Nan::TryCatch try_catch;
+		callback->Call(Nan::GetCurrentContext()->Global(), argc, argv);
 		if (try_catch.HasCaught())
-			FatalException(try_catch);
+			Nan::FatalException(try_catch);
 	} else {
-		Local < Value > err = Exception::Error(String::New("error"));
+		Local < Value > err = Exception::Error(New("error").ToLocalChecked());
 
 		const unsigned argc = 1;
 		Local<Value> argv[argc] = {err};
 
-		TryCatch try_catch;
-		baton->callback->Call(Context::GetCurrent()->Global(), argc, argv);
+		Nan::TryCatch try_catch;
+		callback->Call(Nan::GetCurrentContext()->Global(), argc, argv);
 		if (try_catch.HasCaught())
-			FatalException(try_catch);
+			Nan::FatalException(try_catch);
 	}
 
-	if (baton->fiMemoryOut)
-		FreeImage_CloseMemory(baton->fiMemoryOut);
+	if (fiMemoryOut)
+		FreeImage_CloseMemory(fiMemoryOut);
+	
+  }
+  FIMEMORY* fiMemoryOut;
+  FIMEMORY* fiMemoryIn;
+  int count_pixel;
+  int title_index;
+  //private:
+
+};
 
 
-	baton->callback.Dispose();
-	delete baton;
-}
+NAN_METHOD(imageBlur) {
+	Nan::HandleScope scope;
+	
+	int indexCallback = info.Length() - 1;
 
-static Handle<Value> imageBlur(const Arguments& args) {
-	HandleScope scope;
+	if (info.Length() < 2)
+		return Nan::ThrowError("Expecting 2 arguments");
 
-	Baton* baton = new Baton();
-	baton->count_pixel = 3;
-	baton->title_index = 0;
+	if (!Buffer::HasInstance(info[0]))
+		return Nan::ThrowError("First argument must be a Buffer");
 
-	int indexCallback = args.Length() - 1;
-
-	if (args.Length() < 2)
-		return ThrowException(Exception::TypeError(String::New("Expecting 2 arguments")));
-
-	if (!Buffer::HasInstance(args[0]))
-		return ThrowException( Exception::TypeError( String::New("First argument must be a Buffer")));
-
-	Local < Function > callback;
-
-	if( args.Length() > 2){
-		if(args[1]->IntegerValue())
-			baton->count_pixel = args[1]->IntegerValue();
+	if (!info[indexCallback]->IsFunction())
+		return Nan::ThrowError( "no have callback" );
+	
+	Nan::Callback *callback = new Nan::Callback(info[indexCallback].As<v8::Function>());
+	
+	BlurWorker* worker = new BlurWorker(callback);
+	worker->count_pixel = 3;
+	worker->title_index = 0;
+	
+	if( info.Length() > 2){
+		if(info[1]->IntegerValue())
+			worker->count_pixel = info[1]->IntegerValue();
 	}
 
-	if( args.Length() > 3 ){
-		if(args[2]->IntegerValue())
-			baton->title_index = args[2]->IntegerValue();
+	if( info.Length() > 3 ){
+		if(info[2]->IntegerValue())
+			worker->title_index = info[2]->IntegerValue();
 	}
 
-	if (!args[indexCallback]->IsFunction())
-		return ThrowException( Exception::TypeError( String::New( "no have callback")));
+	Local<Value> buffer_obj = info[0];
 
-	callback = Local < Function > ::Cast(args[indexCallback]);
-
-#if NODE_MAJOR_VERSION == 0 && NODE_MINOR_VERSION < 10
-	Local < Object > buffer_obj = args[0]->ToObject();
-#else
-	Local<Value> buffer_obj = args[0];
-#endif
-
-
-	baton->request.data = baton;
-	baton->callback = Persistent < Function > ::New(callback);
-
-
-	baton->fiMemoryIn = FreeImage_OpenMemory((BYTE *) Buffer::Data(buffer_obj),
+	worker->fiMemoryIn = FreeImage_OpenMemory((BYTE *) Buffer::Data(buffer_obj),
 			Buffer::Length(buffer_obj));
-	baton->fiMemoryOut = NULL;
+	worker->fiMemoryOut = NULL;
 
+	Nan::AsyncQueueWorker(worker);
 
-	int status = uv_queue_work(uv_default_loop(), &baton->request,
-			imageBlurWork, (uv_after_work_cb) imageBlurAfter);
-
-	assert(status == 0);
-	return Undefined();
 }
 
-static Handle<Value> addImageTitle(const Arguments& args) {
-	HandleScope scope;
+NAN_METHOD(addImageTitle) {
+	Nan::HandleScope scope;
 
 	int index = 0;
 	FIBITMAP * imageTitle = NULL;
 
-	if (args.Length() < 2)
-		return ThrowException(Exception::TypeError(String::New("Expecting 2 arguments")));
+	if (info.Length() < 2)
+		return Nan::ThrowError("Expecting 2 arguments" );
 
-	if (!Buffer::HasInstance(args[0]))
-		return ThrowException( Exception::TypeError( String::New("First argument must be a Buffer")));
-
-	Local < Function > callback;
+	if (!Buffer::HasInstance(info[0]))
+		return Nan::ThrowError("First argument must be a Buffer");
 
 
-	if(args[1]->IntegerValue())
-	index = args[1]->IntegerValue();
+	if(info[1]->IntegerValue())
+	index = info[1]->IntegerValue();
 
-	callback = Local < Function > ::Cast(args[2]);
+	
 
-
-
-#if NODE_MAJOR_VERSION == 0 && NODE_MINOR_VERSION < 10
-	Local < Object > buffer_obj = args[0]->ToObject();
-#else
-	Local<Value> buffer_obj = args[0];
-#endif
-
-
+	Local<Value> buffer_obj = info[0];
 
 	FIMEMORY *  fiMemoryIn =  FreeImage_OpenMemory((BYTE *) Buffer::Data(buffer_obj), Buffer::Length(buffer_obj));
 
@@ -317,17 +304,16 @@ static Handle<Value> addImageTitle(const Arguments& args) {
 
 	titles[index] = imageTitle;
 
-	return Undefined();
+	info.GetReturnValue().SetUndefined();
 }
 
-extern "C" {
-	void init(Handle<Object> target) {
-		HandleScope scope;
+NAN_MODULE_INIT(init) {
+  
+  Nan::Set(target, Nan::New<String>("imageBlur").ToLocalChecked(),
+    GetFunction(Nan::New<FunctionTemplate>(imageBlur)).ToLocalChecked());
 
-		target->Set(String::NewSymbol("imageBlur"), FunctionTemplate::New(imageBlur)->GetFunction());
-		target->Set(String::NewSymbol("addImageTitle"), FunctionTemplate::New(addImageTitle)->GetFunction());
-
-	}
-
-	NODE_MODULE(imgnetfree, init);
+  Nan::Set(target, Nan::New<String>("addImageTitle").ToLocalChecked(),
+    GetFunction(Nan::New<FunctionTemplate>(addImageTitle)).ToLocalChecked());
 }
+
+NODE_MODULE(imgnetfree, init)

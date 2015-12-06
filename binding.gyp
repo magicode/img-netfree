@@ -6,7 +6,10 @@
     {
        "target_name": "imgnetfree",
        "sources": [ 
-            'src/img-netfree.cc'
+            'img-netfree.cc'
+       ],
+       "include_dirs" : [
+	    "<!(node -e \"require('nan')\")"
        ],
        'conditions': [
 		    ['makefreeimage=="true"', {

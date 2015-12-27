@@ -1,26 +1,18 @@
-{  
-  'variables': {
-      'makefreeimage%': '<!(./deps/makefreeimage.sh)',
-   },
-  "targets": [
+{
+    "targets": [
     {
        "target_name": "imgnetfree",
        "sources": [ 
             'img-netfree.cc'
        ],
        "include_dirs" : [
-	    "<!(node -e \"require('nan')\")"
+	    "<!(node -e \"require('nan')\")",
+	    "<!(node -e \"require('free-image-lib/include_dirs')\")"
        ],
-       'conditions': [
-		    ['makefreeimage=="true"', {
-		      'include_dirs':  [ "../deps/FreeImage/Dist/FreeImage.h" ],
-		      "libraries": [ "../deps/FreeImage/Dist/libfreeimage.a"]
-		    }, {
-		      "libraries": ['-lfreeimage']
-		    }]
-		],
+       "libraries": [
+	    "../<!(node -e \"require('free-image-lib/libraries')\")"
+       ]
     }
-    
   ]
 }
 

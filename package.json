@@ -1,11 +1,12 @@
 {
   "name": "img-netfree",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "",
   "main": "index.js",
   "license": "",
   "gypfile": true,
   "dependencies": {
+    "free-image-lib": "https://github.com/magicode/free-image-lib/tarball/master",
     "nan": "^2.1.0"
   }
 }

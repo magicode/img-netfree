@@ -106,11 +106,13 @@ class BlurWorker : public Nan::AsyncWorker {
 	FIBITMAP * fiBitmap = NULL, *thumbnail1 = NULL, *thumbnail2 = NULL , *tmpImage = NULL;
 	FREE_IMAGE_FORMAT format;
 	int width , height , bpp;
-
 	
+
 	std::map<int,FIBITMAP *>::iterator iter;
 	int tw , th ;
-
+	
+	fiMemoryIn = FreeImage_OpenMemory((BYTE *) imageBuffer, lengthBuffer);
+	
 	format = FreeImage_GetFileTypeFromMemory(fiMemoryIn);
 
 	if (format < 0 /*|| FIF_GIF == format*/)
@@ -219,9 +221,14 @@ class BlurWorker : public Nan::AsyncWorker {
 	if (fiMemoryOut)
 		FreeImage_CloseMemory(fiMemoryOut);
 	
+	if(imageBuffer)
+	  delete imageBuffer;
+	
   }
   FIMEMORY* fiMemoryOut;
   FIMEMORY* fiMemoryIn;
+  char *imageBuffer;
+  size_t lengthBuffer;
   int count_pixel;
   int title_index;
   //private:
@@ -260,9 +267,13 @@ NAN_METHOD(imageBlur) {
 	}
 
 	Local<Value> buffer_obj = info[0];
-
-	worker->fiMemoryIn = FreeImage_OpenMemory((BYTE *) Buffer::Data(buffer_obj),
-			Buffer::Length(buffer_obj));
+	
+	worker->lengthBuffer = Buffer::Length(buffer_obj);
+	worker->imageBuffer =  new char[worker->lengthBuffer];
+	
+	std::memcpy(worker->imageBuffer, Buffer::Data(buffer_obj) , worker->lengthBuffer);
+	
+	worker->fiMemoryIn = NULL;
 	worker->fiMemoryOut = NULL;
 
 	Nan::AsyncQueueWorker(worker);

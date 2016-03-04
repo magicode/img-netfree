@@ -94,7 +94,9 @@ static BOOL Combine32(FIBITMAP *dst_dib, FIBITMAP *src_dib, unsigned x, unsigned
 
 class BlurWorker : public Nan::AsyncWorker {
  public:
-  BlurWorker(Nan::Callback *callback) : Nan::AsyncWorker(callback) {}
+  BlurWorker(Nan::Callback *callback) : Nan::AsyncWorker(callback) {
+	save_format = FIF_PNG;
+  }
   ~BlurWorker() {}
 
   // Executed inside the worker-thread.
@@ -105,7 +107,7 @@ class BlurWorker : public Nan::AsyncWorker {
 
 	FIBITMAP * fiBitmap = NULL, *thumbnail1 = NULL, *thumbnail2 = NULL , *tmpImage = NULL;
 	FREE_IMAGE_FORMAT format;
-	int width , height , bpp;
+	int bpp;
 	
 
 	std::map<int,FIBITMAP *>::iterator iter;
@@ -149,8 +151,10 @@ class BlurWorker : public Nan::AsyncWorker {
 		goto ret;
 
 	thumbnail2 = FreeImage_Rescale( thumbnail1, width, height, FILTER_BOX );
-
-
+	
+	if (!thumbnail2)
+		goto ret;
+	
 	if(title_index){
 		iter = titles.find(title_index);
 		if (iter != titles.end() )
@@ -162,13 +166,16 @@ class BlurWorker : public Nan::AsyncWorker {
 			}
 		}
 	}
-
-	if (!thumbnail2)
-		goto ret;
+	
+	if( FIF_JPEG == save_format ){
+		tmpImage = FreeImage_ConvertTo24Bits(thumbnail2);
+		FreeImage_Unload(thumbnail2);
+		thumbnail2 = tmpImage;
+	}
 
 	fiMemoryOut = FreeImage_OpenMemory();
 
-	FreeImage_SaveToMemory( FIF_PNG, thumbnail2, fiMemoryOut, 0 );
+	FreeImage_SaveToMemory( save_format, thumbnail2, fiMemoryOut, 0 );
 
 	ret:
 
@@ -180,7 +187,8 @@ class BlurWorker : public Nan::AsyncWorker {
 		FreeImage_Unload(thumbnail1);
 	if(thumbnail2)
 		FreeImage_Unload( thumbnail2 );
-
+	if(imageBuffer)
+		delete imageBuffer;
 
   }
 
@@ -193,13 +201,14 @@ class BlurWorker : public Nan::AsyncWorker {
 
 
 	if ( fiMemoryOut ) {
-		const unsigned argc = 2;
-		const char*data;
+		const unsigned argc = 4;
+		const char* data;
 		int datalen;
 		FreeImage_AcquireMemory(fiMemoryOut,(BYTE**)&data, (DWORD*)&datalen );
 		Local<Value> argv[argc] = {
 			Nan::Null(),
-			Nan::CopyBuffer((char*)data,datalen).ToLocalChecked()
+			Nan::CopyBuffer((char*)data,datalen).ToLocalChecked(),
+			Nan::New(width),Nan::New(height)
 		};
 
 		Nan::TryCatch try_catch;
@@ -221,16 +230,16 @@ class BlurWorker : public Nan::AsyncWorker {
 	if (fiMemoryOut)
 		FreeImage_CloseMemory(fiMemoryOut);
 	
-	if(imageBuffer)
-	  delete imageBuffer;
-	
   }
+  
   FIMEMORY* fiMemoryOut;
   FIMEMORY* fiMemoryIn;
   char *imageBuffer;
   size_t lengthBuffer;
   int count_pixel;
   int title_index;
+  FREE_IMAGE_FORMAT save_format;
+  int width , height;
   //private:
 
 };
@@ -259,6 +268,18 @@ NAN_METHOD(imageBlur) {
 	if( info.Length() > 2){
 		if(info[1]->IntegerValue())
 			worker->count_pixel = info[1]->IntegerValue();
+		else{
+			Local<Object> objOps = info[1]->ToObject();
+			if(objOps->Has(Nan::New("pixels").ToLocalChecked())){
+				worker->count_pixel = objOps->Get(Nan::New("pixels").ToLocalChecked())->IntegerValue();
+			}
+			if(objOps->Has(Nan::New("title").ToLocalChecked())){
+				worker->title_index = objOps->Get(Nan::New("title").ToLocalChecked())->IntegerValue();
+			}
+			if(objOps->Has(Nan::New("format").ToLocalChecked())){
+				worker->save_format = (FREE_IMAGE_FORMAT) objOps->Get(Nan::New("format").ToLocalChecked())->IntegerValue();
+			}
+		}
 	}
 
 	if( info.Length() > 3 ){

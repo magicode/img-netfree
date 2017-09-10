@@ -6,9 +6,16 @@ module.exports = addon;
 
 var fs = require('fs');
 
-module.exports.addImageTitle(fs.readFileSync(__dirname + '/checking.png'), 1);
-module.exports.addImageTitle(fs.readFileSync(__dirname + '/overflow.png'), 2);
-module.exports.addImageTitle(fs.readFileSync(__dirname + '/block.png'), 3);
+var titles = module.exports.titles = {};
+titles.CHECKING = 1;
+titles.OVERFLOW = 2;
+titles.BLOCK = 3;
+titles.EMBEDDED = 4;
+
+module.exports.addImageTitle(fs.readFileSync(__dirname + '/checking.png'), titles.CHECKING);
+module.exports.addImageTitle(fs.readFileSync(__dirname + '/overflow.png'), titles.OVERFLOW);
+module.exports.addImageTitle(fs.readFileSync(__dirname + '/block.png'),    titles.BLOCK);
+module.exports.addImageTitle(fs.readFileSync(__dirname + '/embedded.png'), titles.EMBEDDED);
 
 module.exports.formats = {
 	FIF_BMP		: 0,

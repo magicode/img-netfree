@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="embedded.svg">
+  <defs
+     id="defs4">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient4136">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop4138" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop4140" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4136"
+       id="radialGradient4142"
+       cx="479.66785"
+       cy="572.55936"
+       fx="479.66785"
+       fy="572.55936"
+       r="57.620313"
+       gradientTransform="matrix(1,0,0,0.70565393,0,168.5306)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="64.985101"
+     inkscape:cy="442.73124"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1007"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:70.99999785%;font-family:Assistant;-inkscape-font-specification:Assistant;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:0.36551723;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.50344825"
+       x="479.33316"
+       y="555.21936"
+       id="text3336"
+       sodipodi:linespacing="70.999998%"
+       inkscape:export-xdpi="57.813351"
+       inkscape:export-ydpi="57.813351"><tspan
+         sodipodi:role="line"
+         id="tspan3338"
+         x="479.33316"
+         y="555.21936"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:70.99999785%;font-family:Assistant;-inkscape-font-specification:Assistant;fill:#ffffff;fill-opacity:0.36551723;stroke:#000000;stroke-opacity:0.50344825">תמונה</tspan><tspan
+         sodipodi:role="line"
+         x="479.33316"
+         y="583.61938"
+         id="tspan3340"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:70.99999785%;font-family:Assistant;-inkscape-font-specification:Assistant;fill:#ffffff;fill-opacity:0.36551723;stroke:#000000;stroke-opacity:0.50344825">מוטמעת</tspan><tspan
+         sodipodi:role="line"
+         x="479.33316"
+         y="612.01935"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:70.99999785%;font-family:Assistant;-inkscape-font-specification:Assistant;fill:#ffffff;fill-opacity:0.36551723;stroke:#000000;stroke-opacity:0.50344825"
+         id="tspan4144">לא נבדק</tspan></text>
+  </g>
+</svg>
